@@ -14,23 +14,50 @@
         android:layout_height="wrap_content"
         android:text="Azimuth"
         android:id="@+id/azimuthView"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-    />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 
     <ImageView
         android:id="@+id/compass_base"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/compass_base"
-    />
+        android:src="@drawable/compass_base" />
+
+    <ImageView
+        android:id="@+id/compass_feet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/compass_feet" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editText3"
+        android:width="50dp"
+        android:cursorVisible="false"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:id="@+id/compass_arrow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/compass_arrow"
-        android:elevation="0dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="DIRECCION"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_below="@+id/editText3"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>

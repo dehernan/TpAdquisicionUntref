@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,14 +22,18 @@ public class MainActivity extends AppCompatActivity {
     boolean haveMagnetometer = false;
 
     private TextView azimuthText;
+    private EditText directionEditText;
     private ImageView compassArrow;
+    private ImageView compassFeet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.azimuthText = (TextView) findViewById(R.id.azimuthView);
+        this.azimuthText = (TextView)findViewById(R.id.azimuthView);
+        this.directionEditText = (EditText)findViewById(R.id.editText3);
         this.compassArrow = (ImageView)findViewById(R.id.compass_arrow);
+        this.compassFeet = (ImageView)findViewById(R.id.compass_feet);
         inicializar();
     }
 
@@ -68,6 +73,16 @@ public class MainActivity extends AppCompatActivity {
                 azimuthText.setText(Integer.toString(azimuth));
                 compassArrow.setRotation((float)(-(azimuth - 153.5)));
             }
+
+            String compassFeetDirectionString = directionEditText.getText().toString();
+            if (! compassFeetDirectionString.matches("")) {
+                float compassFeetDirectionFloat = Float.valueOf(compassFeetDirectionString);
+                compassFeet.setRotation(( - compassFeetDirectionFloat + 360) % 360);
+
+            } else {
+                compassFeet.setRotation((float) 0);
+            }
+
         }
 
         @Override
