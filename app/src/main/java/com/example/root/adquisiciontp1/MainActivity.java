@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,12 +21,14 @@ public class MainActivity extends AppCompatActivity {
     boolean haveMagnetometer = false;
 
     private TextView azimuthText;
+    private ImageView compassArrow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.azimuthText = (TextView) findViewById(R.id.azimuthView);
+        this.compassArrow = (ImageView)findViewById(R.id.compass_arrow);
         inicializar();
     }
 
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             if ( SensorManager.getRotationMatrix( rMat, iMat, accelerometer_data, magnetic_field_data ) ) {
                 azimuth= (int) ( Math.toDegrees( SensorManager.getOrientation( rMat, orientation )[0] ) + 360 ) % 360;
                 azimuthText.setText(Integer.toString(azimuth));
-
+                compassArrow.setRotation((float)(-(azimuth - 153.5)));
             }
         }
 

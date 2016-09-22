@@ -14,15 +14,23 @@
         android:layout_height="wrap_content"
         android:text="Azimuth"
         android:id="@+id/azimuthView"
-            android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
-        <!--android:layout_alignParentTop="true"
-        android:layout_marginTop="130dp" -->
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+    />
 
 
     <ImageView
         android:id="@+id/compass_base"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/compass_base"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/compass_base"
+    />
+
+    <ImageView
+        android:id="@+id/compass_arrow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/compass_arrow"
+        android:elevation="0dp" />
+
 </RelativeLayout>
