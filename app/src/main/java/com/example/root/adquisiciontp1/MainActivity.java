@@ -11,6 +11,8 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,13 +27,17 @@ import static java.lang.Math.abs;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int detour;
     private int azimuth = 0;
     private SensorManager sensorManager = null;
     private Sensor accelerometer;
     private Sensor magnetometer;
-
     boolean haveAccelerometer = false;
     boolean haveMagnetometer = false;
+
+    private CounterTimer globalTimer;
+    private List<Pair<Long,Long>> navigation;
+    private long timeleft;
 
     private TextView azimuthText;
     private TextView timer;
@@ -43,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.azimuthText = (TextView)findViewById(R.id.azimuthView);
@@ -55,13 +63,22 @@ public class MainActivity extends AppCompatActivity {
 
         if ( getIntent().getSerializableExtra("navigationPlan") != null) {
 
-            List<Pair<Long,Long>> result = (List<Pair<Long,Long>>) getIntent().getSerializableExtra("navigationPlan");
-            this.startNavigationCount(result);
-
+            navigation = (List<Pair<Long,Long>>) getIntent().getSerializableExtra("navigationPlan");
+            globalTimer = null;
+            if (!navigation.isEmpty()) {
+                Pair<Long, Long> navPair;
+                navPair = navigation.get(0);
+                directionEditText.setText(navPair.getLeft().toString());
+                timeleft = navPair.getRight();
+                this.startNavigationCount(timeleft);
+            }
         }
+
+        this.detour = getIntent().getIntExtra("detour", 5);
 
         inicializar();
     }
+
 
     private void inicializar(){
 
@@ -71,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         this.magnetometer = this.sensorManager.getDefaultSensor( Sensor.TYPE_MAGNETIC_FIELD );
         this.haveMagnetometer = this.sensorManager.registerListener( sensorEventListener, this.magnetometer, SensorManager.SENSOR_DELAY_GAME );
     }
+
 
     private SensorEventListener sensorEventListener = new SensorEventListener() {
 
@@ -104,8 +122,13 @@ public class MainActivity extends AppCompatActivity {
 
                     int direction = Integer.parseInt(directionEditText.getText().toString());
                     float alpha;
-                    //DE ACA A QUE TERMINAN LOS IFS ES UN ASCO, HAY QUE VER COMO LO RE-ARMAMOS.. IT WORKS
-                    if (abs(direction-azimuth) >= 5){
+
+                    if (abs(direction-azimuth) >= detour){
+
+                        if (globalTimer != null){
+                            globalTimer.cancel();
+                            globalTimer = null;
+                        }
 
                         if (direction <= 180){
                             if ((azimuth - direction) >= 0 && (azimuth - direction) <= 180){
@@ -142,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         right_indicator.setAlpha(0L);
                         left_indicator.setAlpha(0L);
+                        if (globalTimer == null && timeleft > 0){
+                            startNavigationCount(timeleft);
+                        }
                     }
                 }
             }
@@ -168,40 +194,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected void startNavigationCount(List<Pair<Long,Long>> navigationList){
+    protected void startNavigationCount(long timeLeft){
 
-        if (!navigationList.isEmpty()){
+        globalTimer = new CounterTimer(timeLeft*1000, 1000);
+        globalTimer.start();
 
-            Pair<Long,Long> navPair;
-            navPair = navigationList.get(0);
-            this.directionEditText.setText(navPair.getLeft().toString());
-            Long timeOfTimer = navPair.getRight();
-            final CounterTimer globalTimer = new CounterTimer(timeOfTimer*1000, 1000, navigationList);
-            globalTimer.start();
-        }else{
-            timer.setText("Finalizado");
-        }
     }
 
     public class CounterTimer extends CountDownTimer{
 
-        private List<Pair<Long,Long>> navigation;
-
-         CounterTimer(long millisInfuture, long countDowninterval, List<Pair<Long,Long>> navigation){
+         CounterTimer(long millisInfuture, long countDowninterval){
             super(millisInfuture,countDowninterval);
-            this.navigation = navigation;
         }
+
 
         @Override
         public void onTick(long millisUntillFinished){
 
+            timeleft = millisUntillFinished/1000;
             timer.setText("Segundos restantes: "+String.valueOf((millisUntillFinished/1000)));
         }
 
         @Override
         public void onFinish(){
-            this.navigation.remove(0);
-            startNavigationCount(this.navigation);
+            navigation.remove(0);
+            if (!navigation.isEmpty()){
+                Pair<Long,Long> navPair;
+                navPair = navigation.get(0);
+                directionEditText.setText(navPair.getLeft().toString());
+                timeleft = navPair.getRight();
+                startNavigationCount(timeleft);
+            }else{
+                timer.setText("Finalizado");
+                timeleft = 0;
+            }
         }
     }
 }

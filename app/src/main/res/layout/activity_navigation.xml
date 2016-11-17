@@ -86,6 +86,19 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:hint="Desvio"
+        android:id="@+id/detour"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/finalizeNavigation"
+        android:layout_toEndOf="@+id/finalizeNavigation" />
 
 
 </RelativeLayout>

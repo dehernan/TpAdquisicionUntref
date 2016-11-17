@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,7 +25,9 @@ public class navigationActivity extends ListActivity {
     private List<Pair<Long,Long>> navigationPlan= new ArrayList<>();
     private EditText degrees;
     private EditText seconds;
-    static final int NAVIGATION_REQUEST = 1;
+    private EditText detourText;
+
+    private int detour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +37,32 @@ public class navigationActivity extends ListActivity {
 
         this.degrees = (EditText)findViewById(R.id.degrees);
         this.seconds = (EditText)findViewById(R.id.seconds);
+        this.detourText = (EditText)findViewById(R.id.detour);
+        this.detour = 0;
+
+        detourText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if(!s.toString().equals("")){
+                    detour = Integer.parseInt(s.toString());
+                }
+            }
+        });
 
         adapter=new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 listItems);
         setListAdapter(adapter);
     }
+
 
     public void addItems(View v) {
 
@@ -60,6 +84,7 @@ public class navigationActivity extends ListActivity {
 
         Intent intent=new Intent(this,MainActivity.class);
         intent.putExtra("navigationPlan", (Serializable) this.navigationPlan);
+        intent.putExtra("detour", this.detour);
         startActivity(intent);
     }
 
